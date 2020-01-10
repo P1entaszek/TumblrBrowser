@@ -5,9 +5,9 @@ package com.prod.tumblrbrowser.model
  */
 data class Post(
     val id: String,
-    val date_gmt: String,
-    val photo_caption: String,
-    val photo_url_1280: String,
+    val dateGMT: String,
+    val photoCaption: String,
+    val photoUrl1280: String,
     val tags: List<String>,
     val tumblelog: Tumblelog
 )

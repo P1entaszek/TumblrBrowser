@@ -5,7 +5,7 @@ package com.prod.tumblrbrowser.model
  */
 data class Tumblelog(
     val name: String,
-    val avatar_url_512: String,
+    val avatarUrl512: String,
     val title: String,
     val photoUrl: String
 )

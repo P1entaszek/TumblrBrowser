@@ -7,5 +7,5 @@ data class UserAccount(
     val accountName: String,
     val accountDescription: String,
     val accountTitle: String,
-    val avatar_url_512: String
+    val avatarUrl512: String
 )
