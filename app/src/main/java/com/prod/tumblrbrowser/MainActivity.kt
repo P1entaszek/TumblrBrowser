@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        TumblrBrowserClient.tumblrBrowserClient.getUserPosts("ksiezniczka-z-porcelany", 20, object:
+        TumblrBrowserClient.tumblrBrowserClient.getUserPosts("flaroh", 0, object:
             ServerResponseListener<JsonObject?> {
             override fun onSuccess(response: JsonObject) {
             Toast.makeText(applicationContext, "udalo sie", Toast.LENGTH_LONG).show()

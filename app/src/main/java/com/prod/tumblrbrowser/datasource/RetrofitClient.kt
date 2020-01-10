@@ -22,7 +22,7 @@ object RetrofitClient {
                     .create()
                 val httpClient = OkHttpClient.Builder()
                     .addInterceptor { chain: Interceptor.Chain ->
-                        var build = chain.request().newBuilder().build()
+                        val build = chain.request().newBuilder().build()
                         val request: Request = build
                         var response = chain.proceed(request)
                         val rawJson = response.body()!!.string()
