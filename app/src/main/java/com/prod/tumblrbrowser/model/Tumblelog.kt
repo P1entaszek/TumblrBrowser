@@ -7,7 +7,5 @@ data class Tumblelog(
     val name: String,
     val avatar_url_512: String,
     val title: String,
-    val photoUrl: String,
-    val body: String
-
+    val photoUrl: String
 )
