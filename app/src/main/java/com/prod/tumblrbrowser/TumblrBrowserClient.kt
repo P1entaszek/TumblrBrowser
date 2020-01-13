@@ -1,11 +1,11 @@
 package com.prod.tumblrbrowser
 
-import com.google.gson.JsonArray
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.prod.tumblrbrowser.datasource.ApiService
 import com.prod.tumblrbrowser.datasource.RetrofitClient
 import com.prod.tumblrbrowser.datasource.ServerResponseListener
-import com.prod.tumblrbrowser.model.Post
+import com.prod.tumblrbrowser.model.TumblrPost
 import com.prod.tumblrbrowser.model.Tumblelog
 import com.prod.tumblrbrowser.model.UserAccount
 import io.reactivex.Observer
@@ -25,7 +25,7 @@ class TumblrBrowserClient {
             return retrofit?.create(ApiService::class.java)
         }
 
-    fun getUserPosts(userName: String, postsStart: Int, listener: ServerResponseListener<JsonObject?>){
+    fun getUserPosts(userName: String, postsStart: Int, listener: ServerResponseListener<UserAccount, List<TumblrPost>>){
         val finalUrl = "https://$userName.tumblr.com/api/read/json?start=$postsStart"
         apiService!!.getResponse(finalUrl)
             ?.subscribeOn(Schedulers.io())
@@ -40,36 +40,20 @@ class TumblrBrowserClient {
                 }
 
                 override fun onNext(json: JsonObject) {
-                    val postsList = ArrayList<Post>()
-                    val accountName = userName
+                    val gson = GsonBuilder().serializeNulls().create()
+                    val postsList = ArrayList<TumblrPost>()
                     val account = json.getAsJsonObject("tumblelog")
                     val jsonPosts = json.get("posts").asJsonArray
-                    val accountAvatarPhotoUrl = jsonPosts.get(0).asJsonObject.get("tumblelog").asJsonObject.get("avatar_url_512").asString
-                    val userAccount = UserAccount(
-                        userName,
-                        account.asJsonObject.get("description").asString,
-                        account.asJsonObject.get("title").asString,
-                        accountAvatarPhotoUrl
-                    )
+                    val userAccount = gson.fromJson(account, UserAccount::class.java)
                     jsonPosts.forEach {
-                        val photoUrl = it.asJsonObject.get("photo-url-1280").asString
                         val tumblelog = it.asJsonObject.get("tumblelog")
-                        val tumblelogModel = Tumblelog(accountName,
-                            accountAvatarPhotoUrl,
-                            tumblelog.asJsonObject.get("title").asString,
-                            photoUrl)
-
-                        val post = Post(
-                            it.asJsonObject.get("id").asString,
-                            it.asJsonObject.get("date-gmt").asString,
-                            it.asJsonObject.get("photo-caption").asString,
-                            photoUrl,
-                            getTagsLists(it.asJsonObject.get("tags").asJsonArray),
-                            tumblelogModel
-                        )
+                        val tumblelogModel = gson.fromJson(tumblelog, Tumblelog::class.java)
+                        val post = gson.fromJson(it, TumblrPost::class.java)
+                        post.tumblelog = tumblelogModel
                         postsList.add(post)
                     }
-
+                    userAccount.avatarUrl512 = postsList.get(0).tumblelog.avatarUrl512
+                    userAccount.avatarUrl128 = postsList.get(0).tumblelog.avatarUrl128
                     listener.onSuccess(userAccount, postsList)
                 }
 
@@ -77,14 +61,6 @@ class TumblrBrowserClient {
                     listener.onError(e)
                 }
             })
-    }
-
-    private fun getTagsLists(jsonArray: JsonArray): List<String>{
-        val list: MutableList<String> = ArrayList()
-        for (i in 0 until jsonArray.size()) {
-            list.add(jsonArray.get(i).asString)
-        }
-        return list
     }
 
     companion object {
