@@ -12,16 +12,16 @@ class SearchTumblrUserInteractor : SearchTumblrUserMVP.Interactor {
     override fun getTumblrPosts(
         searchedTumblrUser: String,
         postStart: Int,
-        sercallback: SearchTumblrUserMVP.Interactor.GetTumblrPostsCallback
+        serverCallback: SearchTumblrUserMVP.Interactor.GetTumblrPostsCallback
     ) {
         TumblrBrowserClient.tumblrBrowserClient.getUserPosts(searchedTumblrUser, postStart, object :
             ServerResponseListener<UserAccount, List<TumblrPost>> {
             override fun onSuccess(user: UserAccount, tumblrPosts: List<TumblrPost>) {
-                sercallback.onGetTumblrPostsSuccessCallback(user, tumblrPosts)
+                serverCallback.onGetTumblrPostsSuccessCallback(user, tumblrPosts)
             }
 
             override fun onError(error: Throwable) {
-                sercallback.onGetTumblrPostsErrorCallback(error)
+                serverCallback.onGetTumblrPostsErrorCallback(error)
             }
         })
 

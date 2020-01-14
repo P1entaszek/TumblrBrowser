@@ -14,13 +14,14 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
+        android:hint="@string/search_new_user"
         android:inputType="textPersonName"
-        android:text="Search new user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#076157"
@@ -41,13 +42,13 @@
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent">
 
-            <ImageView
+            <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/userImgView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:scaleType="centerCrop"
                 android:layout_margin="3dp"
+                android:gravity="center"
+                app:civ_border_color="#3D3D3D"
                 app:srcCompat="@mipmap/ic_launcher"
                 tools:srcCompat="@tools:sample/avatars[0]" />
 
@@ -55,25 +56,37 @@
                 android:id="@+id/userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_margin="5dp"
-                android:text="name" />
+                android:gravity="center"
+                tools:text="name" />
 
-            <TextView
+            <org.sufficientlysecure.htmltextview.HtmlTextView
                 android:id="@+id/userDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_margin="5dp"
-                android:text="description" />
+                android:gravity="center"
+                tools:text="description" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#034D44" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/userSearchingBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

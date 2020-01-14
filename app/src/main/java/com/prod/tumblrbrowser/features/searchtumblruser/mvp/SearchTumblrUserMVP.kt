@@ -7,29 +7,30 @@ import com.prod.tumblrbrowser.model.UserAccount
  * Created by Piotr Jaszczurowski on 13.01.2020.
  */
 interface SearchTumblrUserMVP {
+
     interface View {
-        fun showError()
         fun setupRecyclerView()
-        fun showPosts()
-        fun showUserDetails()
         fun setupSearchingBar()
+        fun showUserDetails(user: UserAccount)
+        fun showError(message: String?)
+        fun showPosts(posts: List<TumblrPost>)
     }
 
-    interface Presenter {
+    interface Presenter : Interactor.GetTumblrPostsCallback {
         fun initView()
-        fun validateUserSearchingQuery(string: String)
-        fun gotTumblrPosts()
+        fun validateUserSearchingQuery(query: String)
+        fun searchTumblrUser(query: String, startingRequestPostLevel: Int)
     }
 
     interface Interactor {
         fun getTumblrPosts(
             searchedTumblrUser: String,
             postStart: Int,
-            sercallback: GetTumblrPostsCallback
+            serverCallback: GetTumblrPostsCallback
         )
 
         interface GetTumblrPostsCallback {
-            fun onGetTumblrPostsSuccessCallback(user: UserAccount?, tumblrPosts: List<TumblrPost>)
+            fun onGetTumblrPostsSuccessCallback(user: UserAccount, tumblrPosts: List<TumblrPost>)
             fun onGetTumblrPostsErrorCallback(error: Throwable)
         }
     }

@@ -25,12 +25,16 @@ class TumblrBrowserClient {
             return retrofit?.create(ApiService::class.java)
         }
 
-    fun getUserPosts(userName: String, postsStart: Int, listener: ServerResponseListener<UserAccount, List<TumblrPost>>){
+    fun getUserPosts(
+        userName: String,
+        postsStart: Int,
+        listener: ServerResponseListener<UserAccount, List<TumblrPost>>
+    ) {
         val finalUrl = "https://$userName.tumblr.com/api/read/json?start=$postsStart"
         apiService!!.getResponse(finalUrl)
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe(object : Observer<JsonObject?>{
+            ?.subscribe(object : Observer<JsonObject?> {
                 override fun onComplete() {
                     //no-op
                 }
@@ -45,16 +49,18 @@ class TumblrBrowserClient {
                     val account = json.getAsJsonObject("tumblelog")
                     val jsonPosts = json.get("posts").asJsonArray
                     val userAccount = gson.fromJson(account, UserAccount::class.java)
-                    jsonPosts.forEach {
-                        val tumblelog = it.asJsonObject.get("tumblelog")
-                        val tumblelogModel = gson.fromJson(tumblelog, Tumblelog::class.java)
-                        val post = gson.fromJson(it, TumblrPost::class.java)
-                        post.tumblelog = tumblelogModel
-                        postsList.add(post)
+                    if (jsonPosts.size() != 0) {
+                        jsonPosts.forEach {
+                            val tumblelog = it.asJsonObject.get("tumblelog")
+                            val tumblelogModel = gson.fromJson(tumblelog, Tumblelog::class.java)
+                            val post = gson.fromJson(it, TumblrPost::class.java)
+                            post.tumblelog = tumblelogModel
+                            postsList.add(post)
+                        }
+                        userAccount.avatarUrl512 = postsList[0].tumblelog.avatarUrl512
+                        userAccount.avatarUrl128 = postsList[0].tumblelog.avatarUrl128
+                        listener.onSuccess(userAccount, postsList)
                     }
-                    userAccount.avatarUrl512 = postsList.get(0).tumblelog.avatarUrl512
-                    userAccount.avatarUrl128 = postsList.get(0).tumblelog.avatarUrl128
-                    listener.onSuccess(userAccount, postsList)
                 }
 
                 override fun onError(e: Throwable) {
