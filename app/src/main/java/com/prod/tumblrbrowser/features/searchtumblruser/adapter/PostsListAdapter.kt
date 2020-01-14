@@ -33,7 +33,7 @@ class PostsListAdapter(private val posts: List<TumblrPost>, private val parentCo
 
     override fun onBindViewHolder(holder: PostHolder, position: Int) {
         val currentPost = posts[position]
-        if (!currentPost.userPosted.isNullOrEmpty()) holder.userPosted.setHtml(currentPost.userPosted)
+        if (!currentPost.userPosted.isNullOrEmpty()) holder.userPosted.setHtml("Posted by: " + currentPost.userPosted)
         if (!currentPost.postTitle.isNullOrEmpty()) holder.title.setHtml(currentPost.postTitle)
         if (!currentPost.postBody.isNullOrEmpty()) holder.body.setHtml(currentPost.postBody)
         if (!currentPost.photoCaption.isNullOrEmpty()) holder.photoCaption.setHtml(currentPost.photoCaption)
