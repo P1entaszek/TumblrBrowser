@@ -16,6 +16,7 @@ interface SearchTumblrUserMVP {
         fun showPosts(posts: List<TumblrPost>, postStart: Int)
         fun showProgressBar()
         fun hideProgressBar()
+        fun hideStartingScreen()
     }
 
     interface Presenter : Interactor.GetTumblrPostsCallback {

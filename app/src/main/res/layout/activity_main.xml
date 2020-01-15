@@ -21,11 +21,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/userPostsLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#076157"
         android:orientation="horizontal"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/userSearchingBar"
         app:layout_constraintStart_toStartOf="@+id/userSearchingBar"
@@ -83,10 +84,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/userPostsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/userSearchingBar" />
+
+    <TextView
+        android:id="@+id/startingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="25dp"
+        android:text="@string/starting_text"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userSearchingBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

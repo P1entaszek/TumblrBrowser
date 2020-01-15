@@ -36,6 +36,7 @@ class SearchTumblrUserPresenter(
         view.showUserDetails(user)
         view.showPosts(tumblrPosts, postStart)
         view.hideProgressBar()
+        view.hideStartingScreen()
     }
 
     override fun onGetTumblrPostsErrorCallback(error: Throwable) {

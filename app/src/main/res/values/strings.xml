@@ -3,5 +3,6 @@
     <string name="search_new_user">Search new Tumblr User</string>
     <string name="please_type_some_user_to_search">Please type some user to search</string>
     <string name="please_check_your_internet_connection">Please check your internet connection</string>
-    <string name="starting_text">Please type some Tumblr User that You want to find</string>
+    <string name="starting_text">Welcome to TumblrBrowser app. Here You can find Tumblr User posts.
+                                 Please type some name of the User that You want to find in the search field</string>
 </resources>

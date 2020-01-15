@@ -79,6 +79,11 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
         progressBar.visibility = View.INVISIBLE
     }
 
+    override fun hideStartingScreen() {
+        userPostsLayout.visibility=View.VISIBLE
+        startingTextView.visibility=View.INVISIBLE
+    }
+
     override fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         recycler_view.layoutManager = layoutManager
