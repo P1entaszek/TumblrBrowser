@@ -1,11 +1,12 @@
 package com.prod.tumblrbrowser.features.searchtumblruser
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.prod.tumblrbrowser.R
 import com.prod.tumblrbrowser.features.searchtumblruser.adapter.PostsListAdapter
@@ -21,13 +22,16 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.TimeUnit
 
+
 /**
  * Created by Piotr Jaszczurowski on 07.01.2020
  */
 class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
     lateinit var presenter: SearchTumblrUserPresenter
+    private var postsList = ArrayList<TumblrPost>()
+    private var userQuery = ""
     private val compositeDisposable = CompositeDisposable()
-    private val startingRequestPostLevel = 0
+    private var postStart = 0
     val DOWNLOAD_DELAY_AFTER_TYPING_TEXT = 800L
     lateinit var postsListAdapter: PostsListAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -59,14 +63,37 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
         ).show()
     }
 
-    override fun showPosts(posts: List<TumblrPost>) {
-        postsListAdapter = PostsListAdapter(posts, this)
+    override fun showPosts(posts: List<TumblrPost>, postStart: Int) {
+        postsList.plusAssign(posts)
+        postsListAdapter = PostsListAdapter(postsList, this)
+        recycler_view.scrollToPosition(postStart)
         recycler_view.adapter = postsListAdapter
+    }
+
+    override fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+
+    }
+
+    override fun hideProgressBar() {
+        progressBar.visibility = View.INVISIBLE
     }
 
     override fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         recycler_view.layoutManager = layoutManager
+        recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager =
+                    LinearLayoutManager::class.java.cast(recyclerView.layoutManager)
+                val totalItemCount = layoutManager.itemCount
+                val lastVisible = layoutManager.findLastVisibleItemPosition()
+                val endHasBeenReached = lastVisible + 1 >= totalItemCount
+                if (totalItemCount > 0 && endHasBeenReached) { //y
+                    presenter.loadMorePosts(userQuery)
+                }
+            }
+        })
     }
 
     override fun showUserDetails(user: UserAccount) {
@@ -99,11 +126,12 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
                 .subscribe { text ->
                     if (text.isNotEmpty()) {
                         Log.d("rxview", "something is in")
-                        progressBar.visibility = View.VISIBLE
-                        presenter.searchTumblrUser(text, startingRequestPostLevel)
+                        userQuery = text
+                        postsList.clear()
+                        postStart = 0
+                        presenter.searchTumblrUser(text, postStart)
                     } else {
                         Log.d("rxview", "empty text")
-                        progressBar.visibility = View.INVISIBLE
                         Toast.makeText(
                             this,
                             getString(R.string.please_type_some_user_to_search),

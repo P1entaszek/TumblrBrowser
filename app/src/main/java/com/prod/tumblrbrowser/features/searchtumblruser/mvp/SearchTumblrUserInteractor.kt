@@ -24,7 +24,5 @@ class SearchTumblrUserInteractor : SearchTumblrUserMVP.Interactor {
                 serverCallback.onGetTumblrPostsErrorCallback(error)
             }
         })
-
-
     }
 }

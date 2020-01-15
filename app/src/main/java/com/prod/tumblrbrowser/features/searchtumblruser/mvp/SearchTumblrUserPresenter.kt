@@ -8,8 +8,9 @@ import com.prod.tumblrbrowser.model.UserAccount
  */
 class SearchTumblrUserPresenter(
     val view: SearchTumblrUserMVP.View,
-    val interactor: SearchTumblrUserInteractor = SearchTumblrUserInteractor()
+    private val interactor: SearchTumblrUserInteractor = SearchTumblrUserInteractor()
 ) : SearchTumblrUserMVP.Presenter {
+    private var postStart = 0
 
     override fun initView() {
         view.setupRecyclerView()
@@ -20,17 +21,25 @@ class SearchTumblrUserPresenter(
 
     }
 
-    override fun searchTumblrUser(query: String, startingRequestPostLevel: Int) {
-        interactor.getTumblrPosts(query, startingRequestPostLevel, this)
+    override fun searchTumblrUser(query: String, postStart: Int) {
+        view.showProgressBar()
+        this.postStart = postStart
+        interactor.getTumblrPosts(query, postStart, this)
+    }
+
+    override fun loadMorePosts(userQuery: String) {
+        postStart += 20
+        interactor.getTumblrPosts(userQuery, postStart, this)
     }
 
     override fun onGetTumblrPostsSuccessCallback(user: UserAccount, tumblrPosts: List<TumblrPost>) {
         view.showUserDetails(user)
-        view.showPosts(tumblrPosts)
+        view.showPosts(tumblrPosts, postStart)
+        view.hideProgressBar()
     }
 
     override fun onGetTumblrPostsErrorCallback(error: Throwable) {
         view.showError(error.localizedMessage)
+        view.hideProgressBar()
     }
-
 }
