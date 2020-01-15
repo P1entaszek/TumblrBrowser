@@ -1,10 +1,12 @@
 package com.prod.tumblrbrowser.features.searchtumblruser
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.prod.tumblrbrowser.R
 import com.prod.tumblrbrowser.features.searchtumblruser.adapter.PostsListAdapter
@@ -48,17 +50,19 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
     }
 
     override fun showError(error: Throwable) {
-        if (!Utils.isInternetConnectionAvailable(this)) showToast(this, getString(R.string.error_please_check_your_internet_connection))
-        else showToast(this, getString(R.string.error_no_user_found))
+        if (!Utils.isInternetConnectionAvailable(this)) {
+            showToast(this, getString(R.string.error_please_check_your_internet_connection))
+            userDescription.text =  getString(R.string.error_please_check_your_internet_connection)
+        }
+        else {
+            showToast(this, getString(R.string.error_no_user_found))
+        }
     }
-
-
+    
     override fun showPosts(posts: ArrayList<TumblrPost>, postStart: Int) {
         postsListAdapter.addNewPostsLists(posts)
         recycler_view.scrollToPosition(postStart)
         postsListAdapter.notifyItemInserted(postStart)
-        recycler_view.recycledViewPool.clear()
-        postsListAdapter.notifyDataSetChanged()
     }
 
     override fun showProgressBar() {
@@ -133,12 +137,26 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
                         userQuery = text
                         postsList.clear()
                         postStart = 0
+                        clearLayout()
                         presenter.searchTumblrUser(text, postStart)
+
                     } else {
                         showToast(this, getString(R.string.please_type_some_user_to_search))
                     }
                 }
         )
+    }
+
+    private fun clearLayout() {
+        recycler_view.recycledViewPool.clear()
+        postsListAdapter.notifyDataSetChanged()
+        userDescription.text =  getString(R.string.no_user_found)
+        userName.text = ""
+        Glide
+            .with(this)
+            .load(getDrawable(R.drawable.ic_launcher_background))
+            .centerCrop()
+            .into(userImgView)
     }
 
 }
