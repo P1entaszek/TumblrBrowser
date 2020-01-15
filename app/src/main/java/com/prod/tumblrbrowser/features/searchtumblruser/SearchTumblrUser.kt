@@ -1,9 +1,7 @@
 package com.prod.tumblrbrowser.features.searchtumblruser
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,8 +12,10 @@ import com.prod.tumblrbrowser.features.searchtumblruser.mvp.SearchTumblrUserMVP
 import com.prod.tumblrbrowser.features.searchtumblruser.mvp.SearchTumblrUserPresenter
 import com.prod.tumblrbrowser.model.TumblrPost
 import com.prod.tumblrbrowser.model.UserAccount
+import com.prod.tumblrbrowser.utils.Utils
 import com.prod.tumblrbrowser.utils.Utils.hideKeyboard
 import com.prod.tumblrbrowser.utils.Utils.setImageFromUrl
+import com.prod.tumblrbrowser.utils.Utils.showToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -47,19 +47,18 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
         compositeDisposable.clear()
     }
 
-    override fun showError(error: Throwable?) {
-        //TODO Add error handling
-        Toast.makeText(
-                this,
-        this.getString(R.string.please_check_your_internet_connection),
-        Toast.LENGTH_SHORT
-        ).show()
+    override fun showError(error: Throwable) {
+        if (!Utils.isInternetConnectionAvailable(this)) showToast(this, getString(R.string.error_please_check_your_internet_connection))
+        else showToast(this, getString(R.string.error_no_user_found))
     }
+
 
     override fun showPosts(posts: ArrayList<TumblrPost>, postStart: Int) {
         postsListAdapter.addNewPostsLists(posts)
         recycler_view.scrollToPosition(postStart)
         postsListAdapter.notifyItemInserted(postStart)
+        recycler_view.recycledViewPool.clear()
+        postsListAdapter.notifyDataSetChanged()
     }
 
     override fun showProgressBar() {
@@ -71,8 +70,12 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
     }
 
     override fun hideStartingScreen() {
-        userPostsLayout.visibility=View.VISIBLE
-        startingTextView.visibility=View.INVISIBLE
+        userPostsLayout.visibility = View.VISIBLE
+        startingTextView.visibility = View.INVISIBLE
+    }
+
+    override fun hideKeyboard() {
+        hideKeyboard(this, searchTumblrUserView)
     }
 
     override fun setupRecyclerView() {
@@ -88,11 +91,13 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val layoutManager =
                     LinearLayoutManager::class.java.cast(recyclerView.layoutManager)
-                val totalItemCount = layoutManager.itemCount
-                val lastVisible = layoutManager.findLastVisibleItemPosition()
-                val endHasBeenReached = lastVisible + 1 >= totalItemCount
-                if (totalItemCount > 0 && endHasBeenReached) { //y
-                    presenter.loadMorePosts(userQuery)
+                if(layoutManager!=null){
+                    val totalItemCount = layoutManager.itemCount
+                    val lastVisible = layoutManager.findLastVisibleItemPosition()
+                    val endHasBeenReached = lastVisible + 1 >= totalItemCount
+                    if (totalItemCount > 0 && endHasBeenReached) { //y
+                        presenter.loadMorePosts(userQuery)
+                    }
                 }
             }
         })
@@ -102,8 +107,6 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
         userName.text = user.accountTitle
         userDescription.setHtml(user.accountDescription)
         setImageFromUrl(applicationContext, getUserImageUrl(user), userImgView)
-        hideKeyboard(this, searchTumblrUserView)
-        progressBar.visibility = View.INVISIBLE
     }
 
     private fun getUserImageUrl(user: UserAccount): String {
@@ -127,18 +130,12 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
                 .map { it.view().text.toString() }
                 .subscribe { text ->
                     if (text.isNotEmpty()) {
-                        Log.d("rxview", "something is in")
                         userQuery = text
                         postsList.clear()
                         postStart = 0
                         presenter.searchTumblrUser(text, postStart)
                     } else {
-                        Log.d("rxview", "empty text")
-                        Toast.makeText(
-                            this,
-                            getString(R.string.please_type_some_user_to_search),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast(this, getString(R.string.please_type_some_user_to_search))
                     }
                 }
         )

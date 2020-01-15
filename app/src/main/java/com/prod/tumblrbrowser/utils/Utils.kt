@@ -1,8 +1,11 @@
 package com.prod.tumblrbrowser.utils
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.mikhaellopez.circularimageview.CircularImageView
 import java.util.*
@@ -34,6 +37,20 @@ object Utils {
             .load(imageUrl)
             .centerCrop()
             .into(img)
+    }
+
+    fun isInternetConnectionAvailable(activity: AppCompatActivity):Boolean{
+        val connectivityManager=activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo=connectivityManager.activeNetworkInfo
+        return  networkInfo!=null && networkInfo.isConnected
+    }
+
+    fun showToast(context: Context, message: String) {
+        Toast.makeText(
+            context,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 }

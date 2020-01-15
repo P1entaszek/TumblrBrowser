@@ -12,16 +12,16 @@ interface SearchTumblrUserMVP {
         fun setupRecyclerView()
         fun setupSearchingBar()
         fun showUserDetails(user: UserAccount)
-        fun showError(error: Throwable?)
+        fun showError(error: Throwable)
         fun showPosts(posts: ArrayList<TumblrPost>, postStart: Int)
         fun showProgressBar()
         fun hideProgressBar()
         fun hideStartingScreen()
+        fun hideKeyboard()
     }
 
     interface Presenter : Interactor.GetTumblrPostsCallback {
         fun initView()
-        fun validateUserSearchingQuery(query: String)
         fun searchTumblrUser(query: String, startingRequestPostLevel: Int)
         fun loadMorePosts(userQuery: String)
     }

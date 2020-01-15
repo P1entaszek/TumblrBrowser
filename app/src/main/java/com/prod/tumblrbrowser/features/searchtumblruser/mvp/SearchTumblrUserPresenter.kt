@@ -17,10 +17,6 @@ class SearchTumblrUserPresenter(
         view.setupSearchingBar()
     }
 
-    override fun validateUserSearchingQuery(query: String) {
-
-    }
-
     override fun searchTumblrUser(query: String, postStart: Int) {
         view.showProgressBar()
         this.postStart = postStart
@@ -29,6 +25,7 @@ class SearchTumblrUserPresenter(
 
     override fun loadMorePosts(userQuery: String) {
         postStart += 20
+        view.showProgressBar()
         interactor.getTumblrPosts(userQuery, postStart, this)
     }
 
@@ -37,10 +34,12 @@ class SearchTumblrUserPresenter(
         view.showPosts(tumblrPosts, postStart)
         view.hideProgressBar()
         view.hideStartingScreen()
+        view.hideKeyboard()
     }
 
     override fun onGetTumblrPostsErrorCallback(error: Throwable) {
         view.showError(error)
         view.hideProgressBar()
+        view.hideKeyboard()
     }
 }

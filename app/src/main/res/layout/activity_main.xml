@@ -24,7 +24,6 @@
         android:id="@+id/userPostsLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#076157"
         android:orientation="horizontal"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,9 +35,7 @@
             android:id="@+id/userLayout"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="#076157"
+            android:background="@color/colorPrimary"
             android:orientation="vertical"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent">

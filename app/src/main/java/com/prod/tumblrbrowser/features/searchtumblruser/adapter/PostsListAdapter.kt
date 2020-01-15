@@ -67,6 +67,7 @@ class PostsListAdapter(private val posts: ArrayList<TumblrPost>, private val par
         val tags: HtmlTextView = v.tags
 
         override fun onClick(v: View?) {
+            //TODO Create Post Details view
             Log.d("Clicked", "Recycler clicked")
         }
 
