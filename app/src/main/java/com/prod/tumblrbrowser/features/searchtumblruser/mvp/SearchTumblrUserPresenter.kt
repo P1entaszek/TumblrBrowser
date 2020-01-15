@@ -32,7 +32,7 @@ class SearchTumblrUserPresenter(
         interactor.getTumblrPosts(userQuery, postStart, this)
     }
 
-    override fun onGetTumblrPostsSuccessCallback(user: UserAccount, tumblrPosts: List<TumblrPost>) {
+    override fun onGetTumblrPostsSuccessCallback(user: UserAccount, tumblrPosts: ArrayList<TumblrPost>) {
         view.showUserDetails(user)
         view.showPosts(tumblrPosts, postStart)
         view.hideProgressBar()
@@ -40,7 +40,7 @@ class SearchTumblrUserPresenter(
     }
 
     override fun onGetTumblrPostsErrorCallback(error: Throwable) {
-        view.showError(error.localizedMessage)
+        view.showError(error)
         view.hideProgressBar()
     }
 }

@@ -12,8 +12,8 @@ interface SearchTumblrUserMVP {
         fun setupRecyclerView()
         fun setupSearchingBar()
         fun showUserDetails(user: UserAccount)
-        fun showError(message: String?)
-        fun showPosts(posts: List<TumblrPost>, postStart: Int)
+        fun showError(error: Throwable?)
+        fun showPosts(posts: ArrayList<TumblrPost>, postStart: Int)
         fun showProgressBar()
         fun hideProgressBar()
         fun hideStartingScreen()
@@ -34,7 +34,7 @@ interface SearchTumblrUserMVP {
         )
 
         interface GetTumblrPostsCallback {
-            fun onGetTumblrPostsSuccessCallback(user: UserAccount, tumblrPosts: List<TumblrPost>)
+            fun onGetTumblrPostsSuccessCallback(user: UserAccount, tumblrPosts: ArrayList<TumblrPost>)
             fun onGetTumblrPostsErrorCallback(error: Throwable)
         }
     }

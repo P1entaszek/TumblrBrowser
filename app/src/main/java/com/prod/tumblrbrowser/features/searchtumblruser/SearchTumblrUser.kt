@@ -34,8 +34,6 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
     private var postStart = 0
     val DOWNLOAD_DELAY_AFTER_TYPING_TEXT = 800L
     lateinit var postsListAdapter: PostsListAdapter
-    private lateinit var linearLayoutManager: LinearLayoutManager
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,35 +42,28 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
         presenter.initView()
     }
 
-    override fun setContentView(view: View?) {
-        super.setContentView(view)
-        linearLayoutManager = LinearLayoutManager(this)
-        recycler_view.layoutManager = linearLayoutManager
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
     }
 
-    override fun showError(message: String?) {
+    override fun showError(error: Throwable?) {
+        //TODO Add error handling
         Toast.makeText(
-            this,
-            this.getString(R.string.please_check_your_internet_connection),
-            Toast.LENGTH_SHORT
+                this,
+        this.getString(R.string.please_check_your_internet_connection),
+        Toast.LENGTH_SHORT
         ).show()
     }
 
-    override fun showPosts(posts: List<TumblrPost>, postStart: Int) {
-        postsList.plusAssign(posts)
-        postsListAdapter = PostsListAdapter(postsList, this)
+    override fun showPosts(posts: ArrayList<TumblrPost>, postStart: Int) {
+        postsListAdapter.addNewPostsLists(posts)
         recycler_view.scrollToPosition(postStart)
-        recycler_view.adapter = postsListAdapter
+        postsListAdapter.notifyItemInserted(postStart)
     }
 
     override fun showProgressBar() {
         progressBar.visibility = View.VISIBLE
-
     }
 
     override fun hideProgressBar() {
@@ -87,6 +78,12 @@ class SearchTumblrUser : AppCompatActivity(), SearchTumblrUserMVP.View {
     override fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         recycler_view.layoutManager = layoutManager
+        postsListAdapter = PostsListAdapter(postsList, this)
+        recycler_view.adapter = postsListAdapter
+        addScrollListenerToRecyclerView()
+    }
+
+    private fun addScrollListenerToRecyclerView() {
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val layoutManager =

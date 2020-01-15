@@ -12,12 +12,13 @@ import com.prod.tumblrbrowser.R
 import com.prod.tumblrbrowser.model.TumblrPost
 import kotlinx.android.synthetic.main.recycler_view_post_model.view.*
 import org.sufficientlysecure.htmltextview.HtmlTextView
+import java.util.ArrayList
 
 
 /**
  * Created by Piotr Jaszczurowski on 14.01.2020.
  */
-class PostsListAdapter(private val posts: List<TumblrPost>, private val parentContext: Context) :
+class PostsListAdapter(private val posts: ArrayList<TumblrPost>, private val parentContext: Context) :
     RecyclerView.Adapter<PostsListAdapter.PostHolder>() {
     private var layoutInflater: LayoutInflater? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostHolder {
@@ -51,6 +52,10 @@ class PostsListAdapter(private val posts: List<TumblrPost>, private val parentCo
         if (!post.photoUrl400.isNullOrEmpty()) return post.photoUrl400
         if (!post.photoUrl250.isNullOrEmpty()) return post.photoUrl250
         else return ""
+    }
+
+    fun addNewPostsLists(postsList: ArrayList<TumblrPost>) {
+        this.posts.addAll(postsList)
     }
 
     inner class PostHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {

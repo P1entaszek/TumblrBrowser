@@ -7,6 +7,6 @@ import com.prod.tumblrbrowser.model.UserAccount
  * Created by Piotr Jaszczurowski on 08.01.2020.
  */
 interface ServerResponseListener<T, U> {
-    fun onSuccess(user: UserAccount, tumblrPosts: List<TumblrPost>)
+    fun onSuccess(user: UserAccount, tumblrPosts: ArrayList<TumblrPost>)
     fun onError(error: Throwable)
 }

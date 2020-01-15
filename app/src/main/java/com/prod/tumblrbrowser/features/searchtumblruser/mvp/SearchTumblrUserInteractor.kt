@@ -16,7 +16,7 @@ class SearchTumblrUserInteractor : SearchTumblrUserMVP.Interactor {
     ) {
         TumblrBrowserClient.tumblrBrowserClient.getUserPosts(searchedTumblrUser, postStart, object :
             ServerResponseListener<UserAccount, List<TumblrPost>> {
-            override fun onSuccess(user: UserAccount, tumblrPosts: List<TumblrPost>) {
+            override fun onSuccess(user: UserAccount, tumblrPosts: ArrayList<TumblrPost>) {
                 serverCallback.onGetTumblrPostsSuccessCallback(user, tumblrPosts)
             }
 
